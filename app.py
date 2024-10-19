@@ -2,10 +2,10 @@ from flask import Flask, render_template, request
 from pgmpy.models import BayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
+import os
 
 app = Flask(__name__)
 
-# Create the Bayesian Network
 model = BayesianNetwork([
     ('Age', 'Breast Cancer'),
     ('Family History', 'Breast Cancer'),
@@ -13,7 +13,6 @@ model = BayesianNetwork([
     ('Breast Cancer', 'Lump')
 ])
 
-# Define the CPDs (Conditional Probability Distributions)
 cpd_age = TabularCPD(variable='Age', variable_card=2, values=[[0.7], [0.3]])  # P(Age > 50) = 0.3
 cpd_family_history = TabularCPD(variable='Family History', variable_card=2, values=[[0.85], [0.15]])  # P(Family History) = 0.15
 
@@ -75,4 +74,5 @@ def index():
     return render_template('index.html', prediction=prediction)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0',debug=True)
